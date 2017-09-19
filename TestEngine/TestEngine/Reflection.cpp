@@ -16,6 +16,20 @@ namespace Reflection
         _Get()->_AddMember("_str", TypeCreator<decltype(Test::TestStruct::_str)>::Get(), (size_t)(&static_cast<Test::TestStruct*>(nullptr)->_str));
     }
 
+	//====== Type =======//
+
+	const Type::Member* Type::GetMemberByName(std::string name)
+	{
+		for (int i = 0; i < _members.size(); ++i)
+		{
+			if (_members[i]._name == name)
+				return &_members[i];
+		}
+		return nullptr;
+	}
+
+	//====== Type =======//
+
 	//====== TypeManager =======//
 
 	// Singleton gettor
@@ -73,6 +87,8 @@ namespace Reflection
     */
 
 	//====== TypeManager =======//
+
+
 
 
 	//====== TestCase =========//
@@ -230,5 +246,7 @@ namespace Reflection
 	};
 
 	//====== TestCase =========//
+
+	
 
 }

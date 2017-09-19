@@ -61,6 +61,7 @@ namespace Reflection
             */
            
         public:
+
             // Getters
             std::string GetName() const { return _name; }
             const Type* GetType() const { return _type; }
@@ -73,6 +74,7 @@ namespace Reflection
 				ValueType& val = *reinterpret_cast<ValueType*>(parentInstPtrVal);
 				return val;
 			}
+
         private:
             // The name of the member
             std::string _name;
@@ -93,7 +95,9 @@ namespace Reflection
         };
 
         // Return the members of the type
-        std::vector<Member> GetMembers() const { return _members; }
+        const std::vector<Member>& GetMembers() const { return _members; }
+		// Returns the pointer to the first member with the given name
+		const Member* GetMemberByName(std::string name);
 
 
     private:
