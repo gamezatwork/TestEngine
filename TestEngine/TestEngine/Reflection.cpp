@@ -71,30 +71,12 @@ namespace Reflection
 	//====== TypeManager =======//
 
 
-	//====== ReflVarManager =======//
-    /*
-	// Singleton gettor
-	ReflVarManager& ReflVarManager::Get()
-	{
-		static ReflVarManager instance;
-		return instance;
-	}
-
-	const ReflVar & ReflVarManager::GetReflVar(std::string reflVarName)
-	{
-		return _reflVars[reflVarName];
-	}
-    */
-
-	//====== TypeManager =======//
-
-
-
 
 	//====== TestCase =========//
 
 	namespace Test
 	{
+		/*
 		class FakeReflVar
 		{
 		public:
@@ -145,6 +127,7 @@ namespace Reflection
 
 			return fakeVar;
 		}
+		*/
 
 		void RunReflectionTest()
 		{
@@ -169,49 +152,13 @@ namespace Reflection
             int i = 234;
             std::string s = "HI";
 
-			const Type* type = Reflection::TypeManager::Get().GetType(std::string(typeid(f).name()));
-			std::cout << "Type is " << (*type).GetTypeName() << " and is of enum " << (int)(*type).GetTypeCat() << std::endl;
-
-            const Type* type2 = Reflection::TypeManager::Get().GetType(std::string(typeid(i).name()));
-            std::cout << "Type is " << (*type2).GetTypeName() << " and is of enum " << (int)(*type2).GetTypeCat() << std::endl;
-
-            const Type* type3 = Reflection::TypeCreator<std::string>::Get();
-            std::cout << "Type is " << (*type3).GetTypeName() << " and is of enum " << (int)(*type3).GetTypeCat() << std::endl;
-
 			TestStruct test(27, 3.14f, "ITS NOT A TRAP");
-
-			std::cout << "Test's _i is " << *static_cast<int*>(TestStruct::__Get__i(&test)) << std::endl;
-			std::cout << "Test's _f is " << *static_cast<float*>(TestStruct::__Get__f(&test)) << std::endl;
-			std::cout << "Test's _str is " << *static_cast<std::string*>(TestStruct::__Get__str(&test)) << std::endl;
 
             // Grab TestStruct's Type and check it
             const Type* testStructType = TypeManager::Get().GetType("Test::TestStruct");
             std::vector<Reflection::Type::Member> members = testStructType->GetMembers();
             std::cout << "TestStruct's type is " << testStructType->GetTypeName() << std::endl;
             std::cout << "Its members are: " << std::endl;
-            for (int i = 0; i < members.size(); ++i)
-            {
-                std::cout << i << ":" << members[i].GetName() << "|" << members[i].GetType()->GetTypeName() << std::endl;
-				std::cout << "String version is " << members[i].GetType()->ToString(members[i].GetPtr(&test)) << std::endl;
-				if (members[i].GetType() == Reflection::TypeCreator<float>::Get())
-				{
-					float& val = members[i].Value<float>(&test);
-					std::cout << "Value is " << val << std::endl;
-					val += 2.5f;
-				}
-				else if (members[i].GetType() == Reflection::TypeCreator<int>::Get())
-				{
-					int& val = members[i].Value<int>(&test);
-					std::cout << "Value is " << val << std::endl;
-					val += 1;
-				}
-				else if (members[i].GetType() == Reflection::TypeCreator<std::string>::Get())
-				{
-					std::string& val = members[i].Value<std::string>(&test);
-					std::cout << "Value is " << val << std::endl;
-					val += "HIII";
-				}
-            }
 			for (int i = 0; i < members.size(); ++i)
 			{
 				std::cout << i << ":" << members[i].GetName() << "|" << members[i].GetType()->GetTypeName() << std::endl;
@@ -232,14 +179,14 @@ namespace Reflection
 				}
 			}
 
-
+			/*
 			FakeReflVar val = GetReflVar(test);
 			for (unsigned i = 0; i < val.GetVarCount(); ++i)
 			{
 				std::cout << val[i].GetName() << ", " << val[i].GetType() << std::endl; // Prints out the name of the variable (e.g _speed) and the type (e.g float)
 				std::cout << val[i].GetVal() << std::endl; // This should print out the value of the object if possible, or just the above if not.
 			}
-
+			*/
 
 
 			std::cout << "Reflection test end!" << std::endl;

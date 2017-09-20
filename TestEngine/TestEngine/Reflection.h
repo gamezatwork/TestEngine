@@ -56,13 +56,6 @@ namespace Reflection
         // A struct to describe a member
         class Member
         {
-            /*
-            // Pass in a pointer to the class, it will return you the value (in void* form)
-            typedef void* (*GetterFn)(void*);
-            // Pass in a pointer to the class and the value you want to set, it will set that value
-            typedef void(*SetterFn)(void*, void*);
-            */
-           
         public:
 
             // Getters
@@ -92,12 +85,6 @@ namespace Reflection
             size_t _offset;
             // The parent of this member (for backwards access)
             const Type* _parent;
-            /*
-            // The getter for this member
-            GetterFn _getter;
-            // The setter for this member
-            SetterFn _setter;
-            */
 
             friend class Type;
         };
@@ -153,10 +140,6 @@ namespace Reflection
         size_t _size;
         // The type category of this type (e.g POD)
         eTYPECATEGORY _typeCat;
-        // Gettor for this type
-        // INSERT HERE
-        // Settor for this type
-        // INSERT HERE
         // Children types
         std::vector<Member> _members;
 		// The ToString function
@@ -257,101 +240,6 @@ namespace Reflection
 
 	//====== TypeManager =======//
 
-	//====== ReflVar =======//
-	// This contains the information about that variable, and allows you to grab it
-
-    // Forward declare it so ReflVarManager can friendclass it
-    /*
-    class ReflVarManager;
-
-	class ReflVar
-	{
-	public:
-
-		// General gettors
-		std::string GetName() const { return _name; }
-        Type GetType() const { return _type; }
-		unsigned GetVarCount() const { return _children.size(); }
-
-		ReflVar& operator[](unsigned index) { return _children[index]; }
-		const ReflVar& operator[] (unsigned index) const { return _children[index]; }
-
-        ReflVar(const ReflVar& reflVar) = default;
-        ReflVar(ReflVar&& reflVar) = default;
-        ReflVar& operator=(const ReflVar& reflVar) = default;
-
-        ReflVar(): _name(""), _type(){}
-
-	private:
-
-        // ERROR HANDLING
-        //ReflVar() : _name(), _type(TypeManager::Get().GetErrorType()) {}
-
-        // IT WILL USE THIS
-        ReflVar(Type type, std::string name = "") :
-            _name(name), _type(type) {}
-
-		// Name of the variable
-		std::string _name;
-		// Typename of the variable
-        Type _type;
-
-		// Child variables
-		std::vector<ReflVar> _children;
-
-        friend class ReflVarManager;
-
-	};
-
-	//====== ReflVar =======//
-
-	//====== ReflVarManager =======//
-	// Grab all your type data from this singleton
-	class ReflVarManager
-	{
-	public:
-
-		// Singleton gettor
-		static ReflVarManager& Get();
-
-		// Call to get the type
-		const ReflVar& GetReflVar(std::string reflVarName);
-
-        // DON'T CALL THIS (for adding ReflVars into the Manager)
-        static const ReflVar& AddReflVar(eTYPECATEGORY typeCat, std::string typeName);
-
-		// NO TOUCHIE
-		ReflVarManager(const ReflVarManager&) = delete;
-		void operator=(const ReflVarManager&) = delete;
-	private:
-
-		// Default constructor
-		ReflVarManager() :_reflVars() {}
-
-		// Contains all the types
-		std::map<std::string, ReflVar> _reflVars;
-
-	};
-    */
-	//====== ReflVarManager =======//
-
-
-	//====== TypeCreator =======//
-	// This guy helps to create the types when you call it
-	/*
-	template <typename T>
-	class TypeCreator
-	{
-	public:
-		static void Init(std::string name, eTYPE type)
-		{
-			Type* instance = TypeManager::Get().AddType(name, type);
-		}
-	};
-	*/
-	
-	//static Type* test = TypeManager::Get().AddType("float", eTYPECATEGORY::POD);
-    //static IDType UNIQUE_NAME = TypeManager::Get().AddType(eTYPECATEGORY::POD, "float");
     static TypeCreator<float> UNIQUE_NAME = TypeCreator<float>("float", sizeof(float), eTYPECATEGORY::POD);
     static TypeCreator<int> UNIQUE_NAME = TypeCreator<int>("int", sizeof(int), eTYPECATEGORY::POD);
     static TypeCreator<std::string> UNIQUE_NAME = TypeCreator<std::string>("std::string", sizeof(std::string), eTYPECATEGORY::POD);
@@ -369,42 +257,6 @@ namespace Reflection
 			int _i;
 			float _f;
 			std::string _str;
-
-		public:
-
-			/*
-			static ReflVar __GetReflVar()
-			{
-				return 
-			}
-			*/
-
-			static void* __Get__i(TestStruct* instance)
-			{
-				return &instance->_i;
-			}
-			static const void* __Get__i(const TestStruct* instance)
-			{
-				return &instance->_i;
-			}
-			static void* __Get__f(TestStruct* instance)
-			{
-				return &instance->_f;
-			}
-			static const void* __Get__f(const TestStruct* instance)
-			{
-				return &instance->_f;
-			}
-			static void* __Get__str(TestStruct* instance)
-			{
-				return &instance->_str;
-			}
-			static const void* __Get__str(const TestStruct* instance)
-			{
-				return &instance->_str;
-			}
-
-            
 
 		};
 
