@@ -42,6 +42,9 @@ namespace Reflection
     {
     public:
 
+		// Typedef for the tostring function (input is the pointer to the instance, output is the string)
+		typedef std::string(*ToStringFn)(void*);
+
         // Returns the name of this type
         std::string GetTypeName() const { return _typeName; }
         // Returns the size of this type
@@ -67,6 +70,11 @@ namespace Reflection
             const Type* GetType() const { return _type; }
             size_t GetOffset() const { return _offset; }
             const Type* GetParent() const { return _parent; }
+			void* GetPtr(void* parentInst) const {
+				size_t parentInstPtrVal = (size_t)parentInst;
+				parentInstPtrVal += _offset;
+				return reinterpret_cast<void*>(parentInstPtrVal);
+			}
 			template <typename ValueType>
 			ValueType& Value(void* parentInst) {
 				size_t parentInstPtrVal = (size_t)parentInst;
@@ -99,6 +107,8 @@ namespace Reflection
 		// Returns the pointer to the first member with the given name
 		const Member* GetMemberByName(std::string name);
 
+		// Call to convert a given type instance to a string
+		std::string ToString(void* instPtr) const { return _toStringFn(instPtr); }
 
     private:
 
@@ -106,21 +116,25 @@ namespace Reflection
         Type(std::string typeName = "",
                 size_t typeSize = 0,
                 eTYPECATEGORY typeCat = eTYPECATEGORY::ERROR, 
+				ToStringFn toStringFn = nullptr,
                 std::vector<Member> members = std::vector<Member>()):
             _typeName(typeName),
             _size(typeSize),
             _typeCat(typeCat),
+			_toStringFn(toStringFn),
             _members(members)
             {}
 
         void _Init(std::string typeName = "",
             size_t typeSize = 0,
             eTYPECATEGORY typeCat = eTYPECATEGORY::ERROR,
+			ToStringFn toStringFn = nullptr,
             std::vector<Member> members = std::vector<Member>()) {
             _typeName = typeName;
             _size = typeSize;
             _typeCat = typeCat;
             _members = members;
+			_toStringFn = toStringFn;
         }
 
         void _AddMember(std::string name, const Type* type, size_t offset)
@@ -145,6 +159,8 @@ namespace Reflection
         // INSERT HERE
         // Children types
         std::vector<Member> _members;
+		// The ToString function
+		ToStringFn _toStringFn;
         
         friend class TypeManager;
         template <typename T>
@@ -174,7 +190,7 @@ namespace Reflection
             eTYPECATEGORY typeCat = eTYPECATEGORY::ERROR,
             std::vector<Type::Member> members = std::vector<Type::Member>())
         {
-            _Get()->_Init(typeName, typeSize, typeCat, members);
+            _Get()->_Init(typeName, typeSize, typeCat, _ToString, members);
             _RegisterMembers();
             TypeManager::Get().RegisterType(Get());
         }
@@ -195,8 +211,17 @@ namespace Reflection
             // NOTHING HERE
         }
 
-
+		// The user-defined classes will specialize this if needed
+		static std::string _ToString(void* instPtr) {
+			return std::to_string(*static_cast<T*>(instPtr));
+		}
     };
+
+	// Override for string case
+	std::string TypeCreator<std::string>::_ToString(void* instPtr) {
+		return *static_cast<std::string*>(instPtr);
+	}
+
 
     //====== TypeCreator =======//
 
@@ -387,6 +412,11 @@ namespace Reflection
 
 		// Call this to make sure reflection is working
 		void RunReflectionTest();
+	}
+
+	// Override for TestStruct case
+	std::string TypeCreator<Test::TestStruct>::_ToString(void* instPtr) {
+		return "TestStruct";
 	}
 
    

@@ -192,6 +192,7 @@ namespace Reflection
             for (int i = 0; i < members.size(); ++i)
             {
                 std::cout << i << ":" << members[i].GetName() << "|" << members[i].GetType()->GetTypeName() << std::endl;
+				std::cout << "String version is " << members[i].GetType()->ToString(members[i].GetPtr(&test)) << std::endl;
 				if (members[i].GetType() == Reflection::TypeCreator<float>::Get())
 				{
 					float& val = members[i].Value<float>(&test);
