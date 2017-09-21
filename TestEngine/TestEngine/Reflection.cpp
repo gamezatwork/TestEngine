@@ -11,9 +11,9 @@ namespace Reflection
     static TypeCreator<Test::TestStruct> UNIQUE_NAME = TypeCreator<Test::TestStruct>("Test::TestStruct", sizeof(Test::TestStruct), eTYPECATEGORY::CLASS);
 
     void TypeCreator<Test::TestStruct>::_RegisterMembers() {
-        _Get()->_AddMember("_i", TypeCreator<decltype(Test::TestStruct::_i)>::Get(),(size_t)(&static_cast<Test::TestStruct*>(nullptr)->_i));
-        _Get()->_AddMember("_f", TypeCreator<decltype(Test::TestStruct::_f)>::Get(), (size_t)(&static_cast<Test::TestStruct*>(nullptr)->_f));
-        _Get()->_AddMember("_str", TypeCreator<decltype(Test::TestStruct::_str)>::Get(), (size_t)(&static_cast<Test::TestStruct*>(nullptr)->_str));
+        _Get()->_AddMember("_i", TypeCreator<Misc::RemQual<decltype(Test::TestStruct::_i)>::ActualType>::Get(),(size_t)(&static_cast<Test::TestStruct*>(nullptr)->_i));
+        _Get()->_AddMember("_f", TypeCreator<Misc::RemQual<decltype(Test::TestStruct::_f)>::ActualType>::Get(), (size_t)(&static_cast<Test::TestStruct*>(nullptr)->_f));
+        _Get()->_AddMember("_str", TypeCreator<Misc::RemQual<decltype(Test::TestStruct::_str)>::ActualType>::Get(), (size_t)(&static_cast<Test::TestStruct*>(nullptr)->_str));
     }
 
 	//====== Type =======//

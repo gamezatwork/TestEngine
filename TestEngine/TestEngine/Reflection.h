@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+#include "Misc.h"
+
 //===== HERE COMES THE MACROS =====//
 // Creates a unique name
 #define UNIQUE_NAME MYCONCAT(GENERATED_NAME_, __COUNTER__)
@@ -29,7 +31,6 @@ namespace Reflection
 	};
 	//====== eTYPE =======//
 
-
 	//====== Type =======//
 
     // Forward declare so that Type can friendclass it
@@ -38,6 +39,7 @@ namespace Reflection
     template <typename T>
     class TypeCreator;
 
+	// Contains the information about a type 
     class Type
     {
     public:
@@ -53,7 +55,7 @@ namespace Reflection
         eTYPECATEGORY GetTypeCat() const { return _typeCat; }
         
         
-        // A struct to describe a member
+        // A struct to describe a member and allows for accessing it
         class Member
         {
         public:
@@ -255,6 +257,7 @@ namespace Reflection
 			TestStruct(int i, float f, std::string str) : _i(i), _f(f), _str(str) {}
 
 			int _i;
+			const int _ci;
 			float _f;
 			std::string _str;
 
