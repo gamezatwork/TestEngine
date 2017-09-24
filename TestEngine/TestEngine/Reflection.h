@@ -254,7 +254,7 @@ namespace Reflection
 		struct TestStruct
 		{
 
-			TestStruct(int i, float f, std::string str) : _i(i), _f(f), _str(str) {}
+			TestStruct(int i, float f, std::string str) : _i(i), _f(f), _str(str), _ci(123) {}
 
 			int _i;
 			const int _ci;
