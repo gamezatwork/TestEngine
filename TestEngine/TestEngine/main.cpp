@@ -19,6 +19,17 @@ void Callback_FrameBufferSize(GLFWwindow* window, int newWidth, int newHeight)
 	glViewport(0, 0, newWidth, newHeight);
 }
 
+// Process the input
+void ProcessInput(GLFWwindow* window)
+{
+	// If it is the escape key, close
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		// Close the window
+		glfwSetWindowShouldClose(window, true);
+	}
+}
+
 int main()
 {
 	// Set up glfw
@@ -54,13 +65,23 @@ int main()
 	// And set the callback for when the window is resized
 	glfwSetFramebufferSizeCallback(window, Callback_FrameBufferSize);
 
-
 	Reflection::Test::RunReflectionTest();
 
 
 	// FINALLY WE DRAW
 	while (!glfwWindowShouldClose(window))
 	{
+		// Process the input
+		ProcessInput(window);
+
+		// RENDER HERE
+
+		// Set the background colour
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+		// Clear!
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		// swap the bufers
 		glfwSwapBuffers(window);
 		// Check for events
