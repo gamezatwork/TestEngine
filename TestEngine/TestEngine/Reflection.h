@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+#include "Core\CoreManager.h"
 #include "Misc.h"
 
 //===== HERE COMES THE MACROS =====//
@@ -212,12 +213,12 @@ namespace Reflection
 
 	//====== TypeManager =======//
 	// Grab all your type data from this singleton
-	class TypeManager
+	class TypeManager : public Core::IManager<TypeManager>
 	{
 	public:
 
 		// Singleton gettor
-		static TypeManager& Get();
+		//static TypeManager& Get();
 
 		// Call to get the type
         // Returns the type from the typename
@@ -235,8 +236,14 @@ namespace Reflection
 		//TypeManager():_types(){}
         TypeManager(){}
 
+		virtual bool _Init() { return true; }
+		virtual void _Update(){}
+		virtual void _ShutDown(){}
+
         // Call this to get the map (the static map is inside)
         static std::map<std::string, const Type*>& _GetTypeMap();
+
+		friend class Core::IManager<TypeManager>;
 
 	};
 

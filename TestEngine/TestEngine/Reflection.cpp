@@ -33,12 +33,13 @@ namespace Reflection
 	//====== TypeManager =======//
 
 	// Singleton gettor
+	/*
 	TypeManager& TypeManager::Get()
 	{
 		static TypeManager instance;
 		return instance;
 	}
-
+	*/
     
     // Call this to get the map (the static map is inside)
     std::map<std::string, const Type*>& TypeManager::_GetTypeMap()
