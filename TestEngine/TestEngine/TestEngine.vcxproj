@@ -158,6 +158,7 @@
     <ClCompile Include="Input\InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Reflection.cpp" />
+    <ClCompile Include="Time\TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\CoreManager.h" />
@@ -316,8 +317,10 @@
     <ClInclude Include="Externals\imgui\stb_textedit.h" />
     <ClInclude Include="Externals\imgui\stb_truetype.h" />
     <ClInclude Include="Input\InputManager.h" />
+    <ClInclude Include="Math\L_Math.h" />
     <ClInclude Include="Misc.h" />
     <ClInclude Include="Reflection.h" />
+    <ClInclude Include="Time\TimeManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Externals\glm\detail\func_common.inl" />
