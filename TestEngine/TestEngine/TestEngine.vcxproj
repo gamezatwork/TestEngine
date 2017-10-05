@@ -148,9 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Core\CoreManager.cpp" />
     <ClCompile Include="Externals\glad\src\glad.c" />
-    <ClCompile Include="Externals\glm\detail\dummy.cpp" />
     <ClCompile Include="Externals\glm\detail\glm.cpp" />
     <ClCompile Include="Externals\imgui\imgui.cpp" />
     <ClCompile Include="Externals\imgui\imgui_demo.cpp" />
@@ -323,6 +321,7 @@
     <ClInclude Include="Time\TimeManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Core\CoreManager.cpp" />
     <None Include="Externals\glm\detail\func_common.inl" />
     <None Include="Externals\glm\detail\func_common_simd.inl" />
     <None Include="Externals\glm\detail\func_exponential.inl" />

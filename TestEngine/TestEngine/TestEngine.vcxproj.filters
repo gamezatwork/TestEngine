@@ -33,13 +33,7 @@
     <ClCompile Include="Externals\glad\src\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\CoreManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Input\InputManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Externals\glm\detail\dummy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Externals\glm\detail\glm.cpp">
@@ -865,6 +859,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="Externals\glm\gtx\wrap.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="Core\CoreManager.cpp">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

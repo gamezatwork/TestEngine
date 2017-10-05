@@ -11,12 +11,14 @@ namespace Core
 	}
 	*/
 
+	/*
 	// The init function which is called at the start (returns false if it failed) (REMEMBER TO CALL THIS AT THE START)
 	template <typename ManagerType>
 	bool IManager<ManagerType>::Init()
 	{
 		return _Init();
 	}
+	
 
 	// The update function which is called every loop (REMEMBER TO CALL THIS AT THE END)
 	template <typename ManagerType>
@@ -31,5 +33,6 @@ namespace Core
 	{
 		_ShutDown();
 	}
+	*/
 
 }

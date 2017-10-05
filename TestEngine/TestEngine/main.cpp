@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "Reflection.h"
+#include "Time\TimeManager.h"
 
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
@@ -120,6 +121,7 @@ int main()
 	glfwSetFramebufferSizeCallback(window, Callback_FrameBufferSize);
 
 	Reflection::Test::RunReflectionTest();
+	Time::TimeManager::Get().Init();
 
 	// Create the VBO and VAO and EBO
 	glGenBuffers(1, &VBO);
@@ -202,7 +204,9 @@ int main()
 		// Process the input
 		ProcessInput(window);
 
-		
+		Time::TimeManager::Get().Update();
+
+		glfwSetWindowTitle(window, std::string("FPS:" + std::to_string(Time::TimeManager::Get().GetFPS())).c_str());
 
 		// Set the background colour
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

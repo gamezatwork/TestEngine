@@ -16,13 +16,22 @@ namespace Core
 		}
 
 		// The init function which is called at the start (returns false if it failed)
-		bool Init();
+		bool Init()
+		{
+			return _Init();
+		}
 		
 		// The update function which is called every loop (REMEMBER TO CALL THIS AT THE END)
-		void Update();
+		void Update()
+		{
+			_Update();
+		}
 
 		// The shut down function which is called at the end (REMEMBER TO CALL THIS AT THE END)
-		void ShutDown();
+		void ShutDown()
+		{
+			_ShutDown();
+		}
 
 	private:
 
