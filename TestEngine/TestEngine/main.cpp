@@ -12,6 +12,8 @@
 #include <GLFW\glfw3.h>
 #include <imgui.h>
 
+#include <stb\stb_image.h>
+
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
@@ -19,14 +21,16 @@ static unsigned int shaderProgram;
 unsigned int VBO;
 unsigned int VAO;
 unsigned int EBO;
+unsigned int texID;
 
 // Rectangle Vertices
 // Counter-clockwise
 static float vertices[] = {
-	0.5f,  0.5f, 0.0f,  // top right
-	0.5f, -0.5f, 0.0f,  // bottom right
-	-0.5f, -0.5f, 0.0f,  // bottom left
-	-0.5f,  0.5f, 0.0f   // top left
+	// positions		// Colours		//Texture coordinates
+	0.5f,  0.5f, 0.0f,	1.0f,0.0f,0.0f,	1.0f,1.0f,// top right
+	0.5f, -0.5f, 0.0f,	0.0f,1.0f,0.0f,	1.0f,0.0f,// bottom right
+	-0.5f, -0.5f, 0.0f,	0.0f,0.0f,1.0f,	0.0f,0.0f,// bottom left
+	-0.5f,  0.5f, 0.0f,	1.0f,1.0f,0.0f,	0.0f,1.0f// top left
 };
 // This is to play with element buffers
 static unsigned int indices[] = {
@@ -73,6 +77,10 @@ void RenderLoop()
 {
 	// Make sure you are using the program
 	glUseProgram(shaderProgram);
+	
+	// Bind the texture
+	glBindTexture(GL_TEXTURE_2D, texID);
+
 	// Bind the vertex array (since you'll be drawing with it)
 	glBindVertexArray(VAO);
 	// Draw the array
@@ -114,6 +122,8 @@ int main()
 		return -1;
 	}
 
+
+	
 
 	// Next, set the OpenGL viewport
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -189,8 +199,12 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	// Then set the vertex attrib pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 	// Copy the indices over to the EBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
@@ -198,6 +212,33 @@ int main()
 	// Uncomment this to see in wireframe mode
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	// Next, the texture
+	// Generate the texture in OpenGL
+	glGenTextures(1, &texID);
+	// Bind it so that we can stuff the imageData in
+	glBindTexture(GL_TEXTURE_2D, texID);
+	// Set up the parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// Load the image
+	int imageWidth, imageHeight, imageColourChannels;
+	unsigned char* imageData = stbi_load("../Resources/Textures/container.jpg", &imageWidth, &imageHeight, &imageColourChannels, 0);
+	if (imageData)
+	{
+		// Then stuff it in
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Error loading image!" << std::endl;
+	}
+	// Done with the image, can free it liao
+	stbi_image_free(imageData);
+
+	
 	// FINALLY WE DRAW
 	while (!glfwWindowShouldClose(window))
 	{
