@@ -21,7 +21,8 @@ static unsigned int shaderProgram;
 unsigned int VBO;
 unsigned int VAO;
 unsigned int EBO;
-unsigned int texID;
+unsigned int boxTexID;
+unsigned int faceTexID;
 
 // Rectangle Vertices
 // Counter-clockwise
@@ -79,7 +80,10 @@ void RenderLoop()
 	glUseProgram(shaderProgram);
 	
 	// Bind the texture
-	glBindTexture(GL_TEXTURE_2D, texID);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, boxTexID);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, faceTexID);
 
 	// Bind the vertex array (since you'll be drawing with it)
 	glBindVertexArray(VAO);
@@ -90,6 +94,35 @@ void RenderLoop()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+}
+
+void LoadTexture(GLuint& texID, std::string resourcePath, bool isRGBA)
+{
+	// Generate the texture in OpenGL
+	glGenTextures(1, &texID);
+	// Bind it so that we can stuff the imageData in
+	glBindTexture(GL_TEXTURE_2D, texID);
+	// Set up the parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// Load the image
+	int imageWidth, imageHeight, imageColourChannels;
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char* imageData = stbi_load(resourcePath.c_str(), &imageWidth, &imageHeight, &imageColourChannels, 0);
+	if (imageData)
+	{
+		// Then stuff it in
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, isRGBA?GL_RGBA:GL_RGB, GL_UNSIGNED_BYTE, imageData);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Error loading image!" << std::endl;
+	}
+	// Done with the image, can free it liao
+	stbi_image_free(imageData);
 }
 
 
@@ -213,6 +246,14 @@ int main()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// Next, the texture
+	LoadTexture(boxTexID, "../Resources/Textures/container.jpg",false);
+	LoadTexture(faceTexID, "../Resources/Textures/awesomeface.png", true);
+
+	// Set the uniforms
+	glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgram, "texture2"), 1);
+
+	/*
 	// Generate the texture in OpenGL
 	glGenTextures(1, &texID);
 	// Bind it so that we can stuff the imageData in
@@ -237,7 +278,7 @@ int main()
 	}
 	// Done with the image, can free it liao
 	stbi_image_free(imageData);
-
+	*/
 	
 	// FINALLY WE DRAW
 	while (!glfwWindowShouldClose(window))

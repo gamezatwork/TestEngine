@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#include "Core\CoreManager.h"
+#include "Core\IManager.h"
 #include "Misc.h"
 
 //===== HERE COMES THE MACROS =====//

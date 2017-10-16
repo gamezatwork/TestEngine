@@ -42,6 +42,9 @@
     <ClCompile Include="Time\TimeManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Externals\stb\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -81,9 +84,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Externals\glad\include\KHR\khrplatform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CoreManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Input\InputManager.h">
@@ -527,6 +527,12 @@
     <ClInclude Include="Time\TimeManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\IManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\WindowManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Externals\stb\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -865,9 +871,6 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="Externals\glm\gtx\wrap.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="Core\CoreManager.cpp">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

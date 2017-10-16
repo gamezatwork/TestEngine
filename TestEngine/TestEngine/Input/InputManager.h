@@ -1,5 +1,5 @@
 #pragma once
-#include "..\Core\CoreManager.h"
+#include "..\Core\IManager.h"
 
 namespace Input {
 
@@ -7,7 +7,13 @@ namespace Input {
 	{
 	public:
 
+		// Returns the mouse position in the given parameters
+		void GetMousePos(float& x, float& y) const;
+
 	private:
+
+		InputManager():_mousePosX(), _mousePosY(){}
+
 		// The init function which is called at the start (returns false if it failed)
 		virtual bool _Init();
 
@@ -16,6 +22,14 @@ namespace Input {
 
 		// The shut down function which is called at the end (OVERRIDE THIS ONE)
 		virtual void _ShutDown();
+
+
+		// The mouse position for this frame
+		float _mousePosX;
+		float _mousePosY;
+
+		friend class Core::IManager<InputManager>;
+
 	};
 
 }

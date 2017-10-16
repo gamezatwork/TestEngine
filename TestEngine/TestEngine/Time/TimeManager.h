@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-#include "../Core/CoreManager.h"
+#include "../Core/IManager.h"
 
 namespace Time {
 

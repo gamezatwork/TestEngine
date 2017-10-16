@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\WindowManager.cpp" />
     <ClCompile Include="Externals\glad\src\glad.c" />
     <ClCompile Include="Externals\glm\detail\glm.cpp" />
     <ClCompile Include="Externals\imgui\imgui.cpp" />
@@ -160,7 +161,8 @@
     <ClCompile Include="Time\TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\CoreManager.h" />
+    <ClInclude Include="Core\IManager.h" />
+    <ClInclude Include="Core\WindowManager.h" />
     <ClInclude Include="Externals\glad\include\glad\glad.h" />
     <ClInclude Include="Externals\glad\include\KHR\khrplatform.h" />
     <ClInclude Include="Externals\glfw\include\GLFW\glfw3.h" />
@@ -323,7 +325,6 @@
     <ClInclude Include="Time\TimeManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Core\CoreManager.cpp" />
     <None Include="Externals\glm\detail\func_common.inl" />
     <None Include="Externals\glm\detail\func_common_simd.inl" />
     <None Include="Externals\glm\detail\func_exponential.inl" />
