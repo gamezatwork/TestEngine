@@ -7,10 +7,14 @@
 
 #include "Reflection.h"
 #include "Time\TimeManager.h"
+#include "Core\WindowManager.h"
 
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
 #include <imgui.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <stb\stb_image.h>
 
@@ -38,6 +42,68 @@ static unsigned int indices[] = {
 	0, 1, 3, // first triangle
 	1, 2, 3 // second triangle
 };
+
+// Cube vertices
+static float cubeVertices[] = {
+	-0.5f, -0.5f, -0.5f,  1.0f,1.0f,1.0f, 0.0f, 0.0f,
+	0.5f, -0.5f, -0.5f,   1.0f,1.0f,1.0f, 1.0f, 0.0f,
+	0.5f,  0.5f, -0.5f,   1.0f,1.0f,1.0f, 1.0f, 1.0f,
+	0.5f,  0.5f, -0.5f,   1.0f,1.0f,1.0f, 1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  1.0f,1.0f,1.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  1.0f,1.0f,1.0f, 0.0f, 0.0f,
+
+	-0.5f, -0.5f,  0.5f,  1.0f,1.0f,1.0f, 0.0f, 0.0f,
+	0.5f, -0.5f,  0.5f,   1.0f,1.0f,1.0f, 1.0f, 0.0f,
+	0.5f,  0.5f,  0.5f,   1.0f,1.0f,1.0f, 1.0f, 1.0f,
+	0.5f,  0.5f,  0.5f,   1.0f,1.0f,1.0f, 1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  1.0f,1.0f,1.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  1.0f,1.0f,1.0f, 0.0f, 0.0f,
+
+	-0.5f,  0.5f,  0.5f,  1.0f,1.0f,1.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  1.0f,1.0f,1.0f, 1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  1.0f,1.0f,1.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  1.0f,1.0f,1.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  1.0f,1.0f,1.0f, 0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  1.0f,1.0f,1.0f, 1.0f, 0.0f,
+
+	0.5f,  0.5f,  0.5f,  1.0f,1.0f,1.0f, 1.0f, 0.0f,
+	0.5f,  0.5f, -0.5f,  1.0f,1.0f,1.0f, 1.0f, 1.0f,
+	0.5f, -0.5f, -0.5f,  1.0f,1.0f,1.0f, 0.0f, 1.0f,
+	0.5f, -0.5f, -0.5f,  1.0f,1.0f,1.0f, 0.0f, 1.0f,
+	0.5f, -0.5f,  0.5f,  1.0f,1.0f,1.0f, 0.0f, 0.0f,
+	0.5f,  0.5f,  0.5f,  1.0f,1.0f,1.0f, 1.0f, 0.0f,
+
+	-0.5f, -0.5f, -0.5f,  1.0f,1.0f,1.0f, 0.0f, 1.0f,
+	0.5f, -0.5f, -0.5f,   1.0f,1.0f,1.0f, 1.0f, 1.0f,
+	0.5f, -0.5f,  0.5f,   1.0f,1.0f,1.0f, 1.0f, 0.0f,
+	0.5f, -0.5f,  0.5f,   1.0f,1.0f,1.0f, 1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  1.0f,1.0f,1.0f, 0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  1.0f,1.0f,1.0f, 0.0f, 1.0f,
+
+	-0.5f,  0.5f, -0.5f,  1.0f,1.0f,1.0f, 0.0f, 1.0f,
+	0.5f,  0.5f, -0.5f,   1.0f,1.0f,1.0f, 1.0f, 1.0f,
+	0.5f,  0.5f,  0.5f,   1.0f,1.0f,1.0f, 1.0f, 0.0f,
+	0.5f,  0.5f,  0.5f,   1.0f,1.0f,1.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  1.0f,1.0f,1.0f, 0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  1.0f,1.0f,1.0f, 0.0f, 1.0f
+};
+
+glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
+};
+
+// Camera stuff
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 
 
 // Called when the window is resized
@@ -79,6 +145,11 @@ void RenderLoop()
 	// Make sure you are using the program
 	glUseProgram(shaderProgram);
 	
+	// Enable depth testing
+	glEnable(GL_DEPTH_TEST);
+
+	
+
 	// Bind the texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, boxTexID);
@@ -89,10 +160,41 @@ void RenderLoop()
 	glBindVertexArray(VAO);
 	// Draw the array
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
-	
+
+	// Kay, stuff in the view mtx (since the camera not gonna move now) and the projection mtx (since that is not gonna change) first
+	// The view matrix
+	glm::mat4 viewMtx;
+	viewMtx = glm::translate(viewMtx, glm::vec3(0.0f, 0.0f, -3.0f));
+	unsigned int viewMtxLoc = glGetUniformLocation(shaderProgram, "viewMtx");
+	glUniformMatrix4fv(viewMtxLoc, 1, GL_FALSE, glm::value_ptr(viewMtx));
+	// The projection matrix
+	glm::mat4 projMtx;
+	projMtx = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+	unsigned int projMtxLoc = glGetUniformLocation(shaderProgram, "projMtx");
+	glUniformMatrix4fv(projMtxLoc, 1, GL_FALSE, glm::value_ptr(projMtx));
+
+	// Randomly stuff in 10 cubes
+	for (unsigned int i = 0; i < 10; ++i)
+	{
+		//float randX = (float)(rand() % 80 - 40) / 10.0f;
+		//float randY = (float)(rand() % 100 - 50) / 10.0f;
+		//float randZ = (float)(rand() % 300 - 150) / 10.0f;
+		//glm::vec3 pos(randX, randY, randZ);
+		glm::vec3 pos = cubePositions[i];
+		// The model matrix
+		glm::mat4 modelMtx;
+		modelMtx = glm::translate(modelMtx, pos);
+		modelMtx = glm::rotate(modelMtx, glm::radians(20.0f * i), glm::vec3(1.0f, 0.3f, 0.5f));
+
+		unsigned int modelMtxLoc = glGetUniformLocation(shaderProgram, "modelMtx");
+		glUniformMatrix4fv(modelMtxLoc, 1, GL_FALSE, glm::value_ptr(modelMtx));
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+
 	// Draw with elements instead
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 }
 
@@ -130,6 +232,7 @@ int main()
 {
 	// Set up glfw
 	// Starts up the glfw library
+	/*
 	glfwInit();
 	// Hint to what versions you want the glfw to be for opengl
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -154,14 +257,18 @@ int main()
 		std::cout << "Failed to intialize GLAD!" << std::endl;
 		return -1;
 	}
+	*/
+
+	Core::WindowManager::Get().Init();
 
 
+	// And set the callback for when the window is resized
+	glfwSetFramebufferSizeCallback(window, Callback_FrameBufferSize);
 	
 
 	// Next, set the OpenGL viewport
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-	// And set the callback for when the window is resized
-	glfwSetFramebufferSizeCallback(window, Callback_FrameBufferSize);
+	
 
 	Reflection::Test::RunReflectionTest();
 	Time::TimeManager::Get().Init();
@@ -230,7 +337,7 @@ int main()
 	glBindVertexArray(VAO);
 	// Copy the vertices over to the VBO
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 	// Then set the vertex attrib pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -293,8 +400,8 @@ int main()
 		// Set the background colour
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-		// Clear!
-		glClear(GL_COLOR_BUFFER_BIT);
+		// Clear! (along with the depth buffer, since we are using it
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		// RENDER HERE
 		RenderLoop();
