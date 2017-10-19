@@ -87,7 +87,7 @@ namespace Core {
 	// Call to destroy a window (watch out because this screws up the vector)
 	bool WindowManager::DestroyWindow(int index)
 	{
-
+		return true;
 	}
 
 }

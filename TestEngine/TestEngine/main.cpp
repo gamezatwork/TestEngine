@@ -232,7 +232,7 @@ int main()
 {
 	// Set up glfw
 	// Starts up the glfw library
-	/*
+	
 	glfwInit();
 	// Hint to what versions you want the glfw to be for opengl
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -257,9 +257,9 @@ int main()
 		std::cout << "Failed to intialize GLAD!" << std::endl;
 		return -1;
 	}
-	*/
+	
 
-	Core::WindowManager::Get().Init();
+	//Core::WindowManager::Get().Init();
 
 
 	// And set the callback for when the window is resized
