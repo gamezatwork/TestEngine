@@ -26,6 +26,9 @@ namespace Core {
 		int height;
 		// The pointer to the actual window
 		WinPtr winPtr;
+
+		Window():index(-1), width(0), height(0), winPtr(nullptr){}
+
 	};
 
 
@@ -36,15 +39,15 @@ namespace Core {
 	public:
 
 		// This gives you the pointer to the actual window
-		WinPtr GetWindow(int index = 0);
+		WinPtr GetWindow();
 		// And this gives you details about the window
-		Window GetWindowInfo(int index = 0);
+		Window GetWindowInfo();
 
 
 		// Call to create a window
-		Window CreateNewWindow(int width, int height, std::string winName);
+		//Window CreateNewWindow(int width, int height, std::string winName);
 		// Call to destroy a window (watch out because this screws up the vector)
-		bool DestroyWindow(int index);
+		//bool DestroyWindow(int index);
 
 
 	private:
@@ -57,8 +60,12 @@ namespace Core {
 		// The shut down function which is called at the end (OVERRIDE THIS ONE)
 		virtual void _ShutDown();
 
+		// Call to create the window
+		Window _CreateWindow(int width, int height, std::string winName);
+
 		// All the windows that currently exist
-		std::vector<Window> _windows;
+		//std::vector<Window> _windows;
+		Window _window;
 
 		friend class IManager<WindowManager>;
 	};

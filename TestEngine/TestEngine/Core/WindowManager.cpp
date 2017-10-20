@@ -5,6 +5,17 @@
 
 namespace Core {
 
+	// This gives you the pointer to the actual window
+	WinPtr WindowManager::GetWindow()
+	{
+		return _window.winPtr;
+	}
+	// And this gives you details about the window
+	Window WindowManager::GetWindowInfo()
+	{
+		return _window;
+	}
+
 	// The init function which is called at the start (returns false if it failed)
 	bool WindowManager::_Init()
 	{
@@ -16,7 +27,8 @@ namespace Core {
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		// Create the main window
-		Window window = CreateNewWindow(DEFAULT_WINWIDTH, DEFAULT_WINHEIGHT, "Main");
+
+		Window window = _CreateWindow(DEFAULT_WINWIDTH, DEFAULT_WINHEIGHT, "Main");
 		if (window.winPtr == nullptr)
 		{
 			std::cout << "Failed to create GLFW window!" << std::endl;
@@ -58,11 +70,13 @@ namespace Core {
 	// The shut down function which is called at the end (OVERRIDE THIS ONE)
 	void WindowManager::_ShutDown()
 	{
-
+		// Ok, time to end
+		glfwTerminate();
 	}
 
+	
 	// Call to create a window
-	Window WindowManager::CreateNewWindow(int width, int height, std::string winName)
+	Window WindowManager::_CreateWindow(int width, int height, std::string winName)
 	{
 		// Create the main window
 		GLFWwindow* window = glfwCreateWindow(width, height, winName.c_str(), nullptr, nullptr);
@@ -73,21 +87,23 @@ namespace Core {
 			return Window();
 		}
 
-		Window newWindow;
-		newWindow.index = _windows.size();
-		newWindow.width = width;
-		newWindow.height = height;
-		newWindow.winPtr = window;
+		//Window newWindow;
+		_window.index = 0;
+		_window.width = width;
+		_window.height = height;
+		_window.winPtr = window;
 
-		_windows.push_back(newWindow);
+		//_windows.push_back(newWindow);
 
-		return newWindow;
+		return _window;
 
 	}
+	/*
 	// Call to destroy a window (watch out because this screws up the vector)
 	bool WindowManager::DestroyWindow(int index)
 	{
 		return true;
 	}
 
+	*/
 }

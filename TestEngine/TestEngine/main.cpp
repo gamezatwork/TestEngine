@@ -233,6 +233,7 @@ int main()
 	// Set up glfw
 	// Starts up the glfw library
 	
+	/*
 	glfwInit();
 	// Hint to what versions you want the glfw to be for opengl
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -257,13 +258,13 @@ int main()
 		std::cout << "Failed to intialize GLAD!" << std::endl;
 		return -1;
 	}
-	
+	*/
 
-	//Core::WindowManager::Get().Init();
-
+	Core::WindowManager::Get().Init();
+	Core::Window window = Core::WindowManager::Get().GetWindowInfo();
 
 	// And set the callback for when the window is resized
-	glfwSetFramebufferSizeCallback(window, Callback_FrameBufferSize);
+	glfwSetFramebufferSizeCallback(window.winPtr, Callback_FrameBufferSize);
 	
 
 	// Next, set the OpenGL viewport
@@ -388,14 +389,14 @@ int main()
 	*/
 	
 	// FINALLY WE DRAW
-	while (!glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window.winPtr))
 	{
 		// Process the input
-		ProcessInput(window);
+		ProcessInput(window.winPtr);
 
 		Time::TimeManager::Get().Update();
 
-		glfwSetWindowTitle(window, std::string("FPS:" + std::to_string(Time::TimeManager::Get().GetFPS())).c_str());
+		glfwSetWindowTitle(window.winPtr, std::string("FPS:" + std::to_string(Time::TimeManager::Get().GetFPS())).c_str());
 
 		// Set the background colour
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -407,13 +408,14 @@ int main()
 		RenderLoop();
 
 		// swap the bufers
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(window.winPtr);
 		// Check for events
 		glfwPollEvents();
 	}
 
 	// Ok, time to end
-	glfwTerminate();
+	Core::WindowManager::Get().ShutDown();
+	//glfwTerminate();
 
 	return 0;
 }
