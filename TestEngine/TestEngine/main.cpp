@@ -8,6 +8,7 @@
 #include "Reflection.h"
 #include "Time\TimeManager.h"
 #include "Core\WindowManager.h"
+#include "File\FileManager.h"
 
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
@@ -260,6 +261,10 @@ int main()
 	}
 	*/
 
+	Core::FileManager::Get().Init();
+
+	Core::FileManager::Get().Print();
+
 	Core::WindowManager::Get().Init();
 	Core::Window window = Core::WindowManager::Get().GetWindowInfo();
 
@@ -416,6 +421,7 @@ int main()
 	// Ok, time to end
 	Core::WindowManager::Get().ShutDown();
 	//glfwTerminate();
+	Core::FileManager::Get().ShutDown();
 
 	return 0;
 }

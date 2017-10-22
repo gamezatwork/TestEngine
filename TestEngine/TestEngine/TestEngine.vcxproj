@@ -155,6 +155,7 @@
     <ClCompile Include="Externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="Externals\imgui\imgui_draw.cpp" />
     <ClCompile Include="Externals\stb\stb_image.cpp" />
+    <ClCompile Include="File\FileManager.cpp" />
     <ClCompile Include="Graphics\GraphicsManager.cpp" />
     <ClCompile Include="Input\InputManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -319,6 +320,7 @@
     <ClInclude Include="Externals\imgui\stb_textedit.h" />
     <ClInclude Include="Externals\imgui\stb_truetype.h" />
     <ClInclude Include="Externals\stb\stb_image.h" />
+    <ClInclude Include="File\FileManager.h" />
     <ClInclude Include="Graphics\GraphicsManager.h" />
     <ClInclude Include="Input\InputManager.h" />
     <ClInclude Include="Math\L_Math.h" />
