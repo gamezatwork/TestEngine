@@ -47,7 +47,7 @@ namespace WindowsFormsApp1
                     newPlayer.name = GetPlayerControl<TextBox>("NameBox", i).Text;
                     newPlayer.mmr = Int32.Parse(GetPlayerControl<TextBox>("MMRBox", i).Text);
                     newPlayer.score = Int32.Parse(GetPlayerControl<TextBox>("ScoreBox", i).Text);
-                    newPlayer.team = (GetPlayerControl<ComboBox>("TeamBox", i).Text == "ALPHA") ? TEAM.ALPHA : TEAM.BRAVO;
+                    newPlayer.team = (GetPlayerControl<RadioButton>("AlphaRadio", i).Checked) ? TEAM.ALPHA : TEAM.BRAVO;
 
                     players.Add(newPlayer);
                 }
@@ -59,19 +59,77 @@ namespace WindowsFormsApp1
             resultsBox.AppendText(newText + Environment.NewLine);
         }
 
+        public void CheckScoreOrMMR(List<Player> playerList, ref bool usingScore, ref bool usingMMR)
+        {
+            // Check the number of players who had a score
+            int playerCountFromPrevMatch = 0;
+            foreach(Player player in playerList)
+            {
+                if (player.score != -1)
+                    playerCountFromPrevMatch += 1;
+            }
+
+            // If all the players were in the previous match, use score
+            if (playerList.Count() == playerCountFromPrevMatch)
+            {
+                usingScore = true;
+                usingMMR = false;
+            }
+            // If not, and the amount is 3 or less, using MMR
+            else if (playerCountFromPrevMatch <= 3)
+            {
+                usingMMR = true;
+                usingScore = false;
+            }
+            // If not, then using Score and matching rate
+            else
+            {
+                usingMMR = true;
+                usingScore = true;
+            }
+
+        }
+
         private void checkBtn_Click(object sender, EventArgs e)
         {
             UpdatePlayersList();
 
             resultsBox.AppendText(Environment.NewLine + "---------------" + DateTime.Now.ToLongTimeString() + "---------------" + Environment.NewLine);
 
+            // Do some dummy checks first
+            if (players.Count() <= 1)
+            {
+                OutputText("NOT ENOUGH PLAYERS!");
+                return;
+            }
+            else if (players.Count()%2 == 1)
+            {
+                OutputText("PLAYER COUNT IS NOT EVEN");
+                return;
+            }
+            else
+            {
+                int bravoPlayers = 0;
+                int alphaPlayers = 0;
+                foreach(Player player in players)
+                {
+                    if (player.team == TEAM.ALPHA)
+                        alphaPlayers += 1;
+                    else if (player.team == TEAM.BRAVO)
+                        bravoPlayers += 1;
+                }
+
+                if (alphaPlayers != bravoPlayers)
+                {
+                    OutputText("TEAM NUMBERS ARE NOT BALANCED");
+                    return;
+                }
+            }
+
             // Check to see whether it is using Score, Matching rate, or both
             bool usingScore = false;
             bool usingMMR = false;
-            // ...
-            usingScore = true;
-            usingMMR = true;
-            // ...
+            CheckScoreOrMMR(players, ref usingScore, ref usingMMR);
 
             if (usingScore != usingMMR)
             {
@@ -79,14 +137,18 @@ namespace WindowsFormsApp1
                 List<List<ValueClass>> result = GetAllCombinations_Single(players,usingScore);
 
                 // Print em all out
-                for (int i = 0; i < result.Count(); ++i)
+                if (showPossiblilitiesCheckbox.Checked)
                 {
-                    OutputText("Possibility " + i.ToString());
-                    foreach(ValueClass val in result[i])
+                    for (int i = 0; i < result.Count(); ++i)
                     {
-                        OutputText(val.Print());
+                        OutputText("Possibility " + i.ToString());
+                        foreach (ValueClass val in result[i])
+                        {
+                            OutputText(val.Print());
+                        }
                     }
                 }
+                
 
                 // Then check against your set
                 bool isCorrect = false;
@@ -135,6 +197,9 @@ namespace WindowsFormsApp1
             }
             else
             {
+
+                OutputText("Using Score and MMR!");
+
                 // First, arrange them all according to score
                 List<Player> newPlayerList = players.ConvertAll(player => player.Clone());
                 newPlayerList.Sort(delegate (Player a, Player b)
@@ -152,9 +217,11 @@ namespace WindowsFormsApp1
                         break;
                 }
 
-                // Do the single sorting with the first batch (which is basically playersWithScore/2, but rounded down)
-                List<Player> playersWithScoreList = newPlayerList.GetRange(0, playersWithScore / 2);
-                List<Player> playersWithoutScoreList = newPlayerList.GetRange(playersWithScore/2, newPlayerList.Count() - playersWithScore/2);
+                // Do the single sorting with the first batch (which is basically playersWithScore, but rounded down to the nearest 2 multiple)
+                playersWithScore /= 2;
+                playersWithScore *= 2;
+                List<Player> playersWithScoreList = newPlayerList.GetRange(0, playersWithScore);
+                List<Player> playersWithoutScoreList = newPlayerList.GetRange(playersWithScore, newPlayerList.Count() - playersWithScore);
                 // Sort the withoutscore guys by matching rate
                 playersWithoutScoreList.Sort(delegate (Player a, Player b)
                 {
@@ -182,18 +249,21 @@ namespace WindowsFormsApp1
                 int firstCount = finalResults.Count();
                 for (int i = 0; i < firstCount; ++i)
                 {
-                    _Double_Step4(ref finalResults, i);
+                    _Double_Step7(ref finalResults, i, playersWithScore);
                 }
 
                 // Now it should be done
 
                 // Print em all out
-                for (int i = 0; i < finalResults.Count(); ++i)
+                if (showPossiblilitiesCheckbox.Checked)
                 {
-                    OutputText("Possibility " + i.ToString());
-                    foreach (DoubleValueClass val in finalResults[i])
+                    for (int i = 0; i < finalResults.Count(); ++i)
                     {
-                        OutputText(val.Print());
+                        OutputText("Possibility " + i.ToString());
+                        foreach (DoubleValueClass val in finalResults[i])
+                        {
+                            OutputText(val.Print());
+                        }
                     }
                 }
 
@@ -245,21 +315,23 @@ namespace WindowsFormsApp1
             }
         }
 
+
+
         // 	7) Moving down the sorted list from the top, the players are placed into the team that has the lower total Matching Rate.							
         // Note: If one team becomes full, all of the remaining players are placed in the other team.
         // Note: Since the players are assigned teams in order, the total for the Matching Rate for both teams can become equal.
         // When that happens, the next player to be assigned will be placed into a randomly selected team.
 
-        private void _Double_Step4(ref List<List<DoubleValueClass>> resultsList, int stepIndex)
+        private void _Double_Step7(ref List<List<DoubleValueClass>> resultsList, int stepIndex, int startIndex)
         {
             List<DoubleValueClass> playerList = resultsList[stepIndex];
 
             // Recursively set the players, so that it can handle the branching case
-            _Double_Step4_Recursive(ref resultsList, stepIndex, 2);
+            _Double_Step7_Recursive(ref resultsList, stepIndex, startIndex);
 
         }
 
-        private void _Double_Step4_Recursive(ref List<List<DoubleValueClass>> resultsList, int stepIndex, int currIndex)
+        private void _Double_Step7_Recursive(ref List<List<DoubleValueClass>> resultsList, int stepIndex, int currIndex)
         {
             List<DoubleValueClass> playerList = resultsList[stepIndex];
             // If the currIndex is out of index, DONE
@@ -311,12 +383,12 @@ namespace WindowsFormsApp1
             if (currALPHAScore > currBRAVOScore)
             {
                 playerList[currIndex].team = TEAM.BRAVO;
-                _Double_Step4_Recursive(ref resultsList, stepIndex, currIndex + 1);
+                _Double_Step7_Recursive(ref resultsList, stepIndex, currIndex + 1);
             }
             else if (currALPHAScore < currBRAVOScore)
             {
                 playerList[currIndex].team = TEAM.ALPHA;
-                _Double_Step4_Recursive(ref resultsList, stepIndex, currIndex + 1);
+                _Double_Step7_Recursive(ref resultsList, stepIndex, currIndex + 1);
 
             }
             // OH BOTH ARE THE SAME, RUN BOTH
@@ -326,10 +398,10 @@ namespace WindowsFormsApp1
                 List<DoubleValueClass> newList = playerList.ConvertAll(value => value.Clone());
                 // Set the old list along its way
                 playerList[currIndex].team = TEAM.ALPHA;
-                _Double_Step4_Recursive(ref resultsList, stepIndex, currIndex + 1);
+                _Double_Step7_Recursive(ref resultsList, stepIndex, currIndex + 1);
                 // Then recurse through the new list
                 resultsList.Add(newList);
-                _Double_Step4_Recursive(ref resultsList, resultsList.Count - 1, currIndex + 1);
+                _Double_Step7_Recursive(ref resultsList, resultsList.Count - 1, currIndex + 1);
             }
         }
 
@@ -403,9 +475,9 @@ namespace WindowsFormsApp1
 
             // Run through the remaining players (i.e everybody who is of NONE team, and do step 3
             bool isFirst = true;
-            for (int i = 0; i < playerList.Count; ++i)
+            for (int i = 0; i < oldPlayerList.Count; ++i)
             {
-                if (playerList[i].team == TEAM.NONE)
+                if (oldPlayerList[i].team == TEAM.NONE)
                 {
                     if (isFirst)
                     {
@@ -551,6 +623,16 @@ namespace WindowsFormsApp1
         {
             resultsBox.Clear();
         }
+
+        private void player1MMRBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     public enum TEAM
@@ -620,8 +702,8 @@ namespace WindowsFormsApp1
         {
             string finalString = team.ToString() + ":";
             if (score >= 0)
-                finalString += "S=" + score.ToString();
-            finalString += "MMR=" + mmr.ToString();
+                finalString += " S=" + score.ToString();
+            finalString += " MMR=" + mmr.ToString();
             return finalString;
         }
     }
