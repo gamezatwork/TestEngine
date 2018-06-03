@@ -122,6 +122,7 @@ void ProcessInput(GLFWwindow* window)
 	{
 		// Close the window
 		glfwSetWindowShouldClose(window, true);
+
 	}
 }
 
